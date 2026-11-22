@@ -1,6 +1,11 @@
-"""Genera las figuras del README a partir de results/ (python -m chatbot.figures)."""
+# Gráficas del README.
+#
+# Uso (desde la carpeta src/):
+#     python -m chatbot.figures
+#
+# figures/results.png    aciertos de cada versión en test y hard (lee results/metrics.csv)
+# figures/attention.png  mapa de atención de dos preguntas (entrena la versión final)
 
-import json
 from pathlib import Path
 
 import matplotlib
@@ -16,9 +21,15 @@ from .text import tokenizar
 RAIZ = Path(__file__).resolve().parents[2]
 RESULTADOS, FIGURAS = RAIZ / "results", RAIZ / "figures"
 
-AZUL, NARANJA = "#2a78d6", "#eb6834"
-TINTA, TINTA_2, REJILLA, FONDO = "#0b0b0b", "#52514e", "#e4e3df", "#fcfcfb"
+# Colores de las gráficas.
+AZUL = "#2a78d6"       # test
+NARANJA = "#eb6834"    # hard
+TINTA = "#0b0b0b"      # texto principal
+TINTA_2 = "#52514e"    # texto secundario y ejes
+REJILLA = "#e4e3df"
+FONDO = "#fcfcfb"
 
+# Nombre de cada versión en el eje de la gráfica.
 NOMBRES = {
     "seq2seq": "Seq2Seq",
     "seq2seq_attention": "+ attention",
@@ -28,6 +39,7 @@ NOMBRES = {
 
 
 def estilo(ax):
+    # Ejes limpios: sin bordes arriba ni a los lados y con una rejilla suave.
     ax.set_facecolor(FONDO)
     for lado in ["top", "right", "left"]:
         ax.spines[lado].set_visible(False)
@@ -38,6 +50,7 @@ def estilo(ax):
 
 
 def figura_resultados():
+    # Barras con la media de las 5 semillas y la desviación típica como barra de error.
     m = pd.read_csv(RESULTADOS / "metrics.csv")
     gen = m[m.version != "retrieval_baseline"]
     resumen = gen.groupby("version", sort=False)[["acierto_test", "acierto_hard"]].agg(["mean", "std"])
@@ -57,6 +70,7 @@ def figura_resultados():
         ax.errorbar(pos, medias, yerr=desv, fmt="none", ecolor=TINTA_2, elinewidth=1, capsize=3, zorder=3)
         for p, v, d in zip(pos, medias, desv):
             ax.text(p, v + d + 1.5, f"{v:.0f}%", ha="center", va="bottom", fontsize=9, color=TINTA)
+    # La referencia de recuperación se dibuja como líneas horizontales.
     for col, estilo_linea, nombre in [("acierto_test", "--", "test"), ("acierto_hard", ":", "hard")]:
         ax.axhline(recuperacion[col] * 100, color=TINTA_2, linestyle=estilo_linea, linewidth=1,
                    label=f"Retrieval baseline, {nombre} ({recuperacion[col] * 100:.0f}%)")
@@ -74,6 +88,8 @@ def figura_resultados():
 
 
 def figura_atencion():
+    # Entrenamos la versión final y dibujamos dónde mira el decoder en dos preguntas
+    # que responde bien (filas: palabras de la respuesta, columnas: palabras de la pregunta).
     intenciones = cargar_intenciones()
     bot = Chatbot(atencion=True, preentrenado=True, semilla=0)
     bot.entrenar(aumentar(pares(intenciones, "train")), pares(intenciones, "val"))
