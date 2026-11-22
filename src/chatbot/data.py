@@ -1,8 +1,4 @@
 # Carga del dataset de intenciones y aumento de datos.
-#
-# El dataset está en data/intents.json. Cada intención (saludo, hora, encoder...) tiene:
-#   - "responses": las respuestas válidas.
-#   - "train", "val", "test" y "hard": las frases de cada grupo.
 
 import json
 import random
@@ -10,30 +6,29 @@ from pathlib import Path
 
 from .text import normalizar_texto, tokenizar
 
-# Ruta del dataset, calculada desde este fichero para que funcione desde cualquier carpeta.
+# Ruta del dataset (data/intents.json).
 RUTA_DATOS = Path(__file__).resolve().parents[2] / "data" / "intents.json"
 
 
+# Cargamos las intenciones del fichero JSON.
 def cargar_intenciones(ruta=RUTA_DATOS):
     with open(ruta, encoding="utf-8") as fichero:
         return json.load(fichero)
 
 
+# Devuelve los pares (frase, respuesta, intención) de un grupo: train, val, test o hard.
 def pares(intenciones, grupo):
-    # Devuelve una lista de tuplas (frase, respuesta, intención) para un grupo:
-    # "train", "val", "test" o "hard".
-    #
-    # En entrenamiento vamos alternando las respuestas válidas de cada intención entre sus
-    # frases, así el modelo ve todas. En el resto de grupos basta con una de referencia,
-    # porque al evaluar se acepta cualquiera de las respuestas válidas.
     resultado = []
 
     for nombre, datos in intenciones.items():
         respuestas = datos["responses"]
 
         for i, frase in enumerate(datos[grupo]):
+            # En entrenamiento vamos alternando las respuestas válidas para que el modelo las vea todas.
             if grupo == "train":
                 respuesta = respuestas[i % len(respuestas)]
+
+            # En el resto basta con una, porque al evaluar se acepta cualquiera de las válidas.
             else:
                 respuesta = respuestas[0]
 
@@ -42,9 +37,8 @@ def pares(intenciones, grupo):
     return resultado
 
 
+# Respuestas que se consideran correctas en cada intención, ya normalizadas.
 def respuestas_validas(intenciones):
-    # Para cada intención, el conjunto de respuestas que se consideran correctas,
-    # ya normalizadas para poder compararlas con lo que genera el modelo.
     validas = {}
 
     for nombre, datos in intenciones.items():
@@ -53,13 +47,9 @@ def respuestas_validas(intenciones):
     return validas
 
 
+# Creamos variaciones sencillas de cada frase: añadir una muletilla al principio,
+# una coletilla al final o quitar una palabra. Así el modelo no depende de una frase exacta.
 def aumentar(pares_entrenamiento, n_copias=3, semilla=0):
-    # Aumento de datos muy sencillo: de cada frase hacemos n_copias variaciones.
-    # A cada copia le hacemos UNO de estos cambios, elegido al azar:
-    #   - una muletilla delante:  "hola"            -> "oye hola"
-    #   - una coletilla detrás:   "dime la hora"    -> "dime la hora por favor"
-    #   - quitar una palabra:     "que es el encoder" -> "que es encoder"
-    # Es lo que pasa cuando alguien escribe de verdad: casi nunca usa la frase exacta.
     rng = random.Random(semilla)
     prefijos = ["oye", "una pregunta", "perdona", "chatbot", "hola"]
     sufijos = ["por favor", "chatbot", "porfa"]
@@ -69,6 +59,8 @@ def aumentar(pares_entrenamiento, n_copias=3, semilla=0):
     for frase, respuesta, nombre in pares_entrenamiento:
         for _ in range(n_copias):
             palabras = tokenizar(frase)
+
+            # Elegimos al azar qué cambio hacemos en esta copia.
             cambio = rng.choice(["prefijo", "sufijo", "quitar"])
 
             if cambio == "prefijo":

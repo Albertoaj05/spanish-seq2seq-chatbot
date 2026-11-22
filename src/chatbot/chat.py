@@ -1,11 +1,9 @@
-# Conversación con el chatbot desde la terminal.
+# Chat con el bot desde la terminal.
 #
-# Uso (desde la carpeta src/):
 #     python -m chatbot.chat                      # versión final (atención + embeddings)
 #     python -m chatbot.chat --version seq2seq    # versión base
 #
-# La primera vez entrena el modelo (menos de un minuto en CPU) y guarda los pesos en
-# models/, así las siguientes veces arranca directamente.
+# La primera vez entrena el modelo y lo guarda en models/, así después arranca directamente.
 
 import argparse
 import pickle
@@ -23,7 +21,7 @@ def cargar_o_entrenar(version, semilla=0):
     carpeta = MODELOS / version
     bot = Chatbot(semilla=semilla, **VERSIONES[version])
 
-    # Si ya está entrenado, recuperamos los vocabularios y los pesos guardados.
+    # Si el modelo ya está guardado, cargamos los vocabularios y los pesos.
     if (carpeta / "estado.pkl").exists():
         with open(carpeta / "estado.pkl", "rb") as fichero:
             bot.__dict__.update(pickle.load(fichero))
@@ -45,7 +43,7 @@ def cargar_o_entrenar(version, semilla=0):
     carpeta.mkdir(parents=True, exist_ok=True)
     bot.modelo.save_weights(carpeta / "pesos.weights.h5")
 
-    # Guardamos todo menos los modelos de Keras (que se reconstruyen) y las curvas.
+    # Guardamos todo menos los modelos de Keras, que se vuelven a construir al cargar.
     estado = {}
     for clave, valor in bot.__dict__.items():
         if clave not in ("modelo", "modelo_encoder", "modelo_paso", "historial"):

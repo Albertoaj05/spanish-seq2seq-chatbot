@@ -1,31 +1,28 @@
-# Limpieza del texto antes de pasárselo al modelo.
-#
-# Es el mismo preprocesado que usaba en la primera versión del chatbot: todo en minúsculas,
-# sin tildes y sin signos de puntuación. Así "¿Cómo estás?" y "como estas" acaban siendo
-# exactamente la misma frase.
+# Preprocesado del texto: minúsculas, sin tildes y sin signos de puntuación.
+# Así "¿Cómo estás?" y "como estas" se convierten en la misma frase.
 
 import re
 import unicodedata
 
 
+# Quitamos tildes para unificar palabras como "Cómo" y "como".
 def quitar_tildes(texto):
-    # Separamos cada letra de su tilde (á -> a + ´) y nos quedamos solo con las letras.
-    texto_separado = unicodedata.normalize("NFD", texto)
+    texto_normalizado = unicodedata.normalize("NFD", texto)
 
     letras = []
-    for caracter in texto_separado:
-        if unicodedata.category(caracter) != "Mn":   # "Mn" son las tildes sueltas
+    for caracter in texto_normalizado:
+        if unicodedata.category(caracter) != "Mn":
             letras.append(caracter)
 
     return "".join(letras)
 
 
+# Normalizamos el texto antes de dividirlo en palabras.
 def normalizar_texto(texto):
-    # Pasamos todo a minúsculas y quitamos las tildes.
     texto = texto.lower().strip()
     texto = quitar_tildes(texto)
 
-    # Cambiamos los signos de puntuación por espacios.
+    # Cambiamos signos de puntuación por espacios.
     texto = re.sub(r"[¿?¡!,.;:()\"']", " ", texto)
 
     # Dejamos solo un espacio entre palabras.
@@ -34,7 +31,6 @@ def normalizar_texto(texto):
     return texto.strip()
 
 
+# Convertimos una frase en una lista de palabras.
 def tokenizar(texto):
-    # Convertimos una frase en una lista de palabras.
-    # Ejemplo: "¿Cómo estás?" -> ["como", "estas"]
     return normalizar_texto(texto).split()

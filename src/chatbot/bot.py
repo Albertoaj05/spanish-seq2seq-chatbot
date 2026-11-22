@@ -1,7 +1,5 @@
-# Clase Chatbot: junta los vocabularios, el modelo, el entrenamiento y la generación
-# de respuestas en un solo sitio.
+# Clase Chatbot: junta los vocabularios, el modelo, el entrenamiento y las respuestas.
 #
-# Uso básico:
 #     bot = Chatbot(atencion=True, preentrenado=True)
 #     bot.entrenar(pares_train, pares_val)
 #     bot.responder("¿Qué es el encoder?")
@@ -20,28 +18,24 @@ class Chatbot:
 
     def __init__(self, atencion=False, preentrenado=False, emb_dim=64, unidades=128, dropout=0.2,
                  semilla=42):
-        # atencion: activa la capa de atención en el decoder.
-        # preentrenado: usa los vectores de spaCy en el encoder.
-        # emb_dim y unidades: tamaño de los embeddings (64) y de las LSTM (128).
+        # Mejoras que se activan.
         self.atencion = atencion
         self.preentrenado = preentrenado
+
+        # Cada palabra se representa con un vector de 64 valores y las LSTM tienen 128 unidades.
         self.emb_dim = emb_dim
         self.unidades = unidades
         self.dropout = dropout
         self.semilla = semilla
 
-    # ------------------------------------------------------------ Preparar datos
-
+    # Pasamos las preguntas a índices y las rellenamos hasta la longitud máxima.
     def _codificar_preguntas(self, frases):
-        # Pasamos cada pregunta a índices y la rellenamos hasta max_encoder.
         secuencias = [self.vocab_enc.codificar(frase) for frase in frases]
         return pad_sequences(secuencias, maxlen=self.max_encoder, padding="post", truncating="post")
 
+    # Preparamos las tres partes que necesita el modelo para entrenar.
     def _codificar_pares(self, pares):
-        # Prepara los tres arrays que necesita el modelo para entrenar:
-        #   X_enc: la pregunta                         ["que", "es", "lstm"]
-        #   X_dec: la respuesta empezando por <start>  ["<start>", "es", "una", ...]
-        #   Y:     la respuesta terminando en <end>    ["es", "una", ..., "<end>"]
+        # Entrada del encoder: la pregunta.
         X_enc = self._codificar_preguntas([frase for frase, _, _ in pares])
 
         entrada_decoder = []
@@ -49,7 +43,11 @@ class Chatbot:
 
         for _, respuesta, _ in pares:
             indices = [self.vocab_dec.stoi[token] for token in tokenizar(respuesta)]
+
+            # La entrada del decoder empieza con <start>.
             entrada_decoder.append([self.vocab_dec.stoi[START]] + indices)
+
+            # La salida esperada termina con <end>.
             salida_decoder.append(indices + [self.vocab_dec.stoi[END]])
 
         X_dec = pad_sequences(entrada_decoder, maxlen=self.max_decoder, padding="post")
@@ -57,13 +55,11 @@ class Chatbot:
 
         return X_enc, X_dec, Y
 
-    # -------------------------------------------------------------- Entrenamiento
-
     def entrenar(self, pares_train, pares_val=None, epochs=400, paciencia=25, batch_size=8, verbose=0):
-        # Semilla fija para que el entrenamiento se pueda repetir con los mismos resultados.
+        # Fijamos la semilla para que los resultados se puedan repetir.
         keras.utils.set_random_seed(self.semilla)
 
-        # 1. Vocabularios.
+        # Creamos los vocabularios.
         if self.preentrenado:
             self.vocab_enc = VocabularioPreentrenado(pares_train, semilla=self.semilla)
             matriz = self.vocab_enc.matriz
@@ -72,23 +68,23 @@ class Chatbot:
             matriz = None
         self.vocab_dec = vocabulario_decoder(pares_train)
 
-        # 2. Longitudes máximas. Dejamos un margen de dos palabras en las preguntas por si
-        #    el usuario escribe una frase algo más larga que las de entrenamiento.
+        # Calculamos la longitud máxima de cada parte.
+        # En las preguntas dejamos dos palabras de margen por si el usuario escribe algo más largo.
         self.max_encoder = max(len(tokenizar(frase)) for frase, _, _ in pares_train) + 2
         self.max_decoder = max(len(tokenizar(respuesta)) for _, respuesta, _ in pares_train) + 1
 
-        # 3. Modelo.
+        # Construimos el modelo.
         self.modelo, self.modelo_encoder, self.modelo_paso = construir_seq2seq(
             len(self.vocab_enc), len(self.vocab_dec), self.max_encoder, self.max_decoder,
             emb_dim=self.emb_dim, unidades=self.unidades, dropout=self.dropout,
             atencion=self.atencion, matriz_embeddings=matriz,
         )
 
-        # 4. Datos de entrenamiento.
+        # Preparamos los datos de entrenamiento.
         X_enc, X_dec, Y = self._codificar_pares(pares_train)
         parametros = {"batch_size": batch_size, "epochs": epochs, "shuffle": True, "verbose": verbose}
 
-        # 5. Si hay validación, paramos cuando deja de mejorar y nos quedamos con los mejores pesos.
+        # Si hay validación, paramos cuando deja de mejorar y nos quedamos con los mejores pesos.
         if pares_val:
             V_enc, V_dec, V_y = self._codificar_pares(pares_val)
             parametros["validation_data"] = ([V_enc, V_dec], V_y)
@@ -96,14 +92,12 @@ class Chatbot:
                 EarlyStopping(monitor="val_loss", patience=paciencia, restore_best_weights=True)
             ]
 
-        # 6. Entrenamos y guardamos las curvas de pérdida y accuracy.
+        # Entrenamos y guardamos la evolución de la pérdida y la precisión.
         self.historial = self.modelo.fit([X_enc, X_dec], Y, **parametros).history
         return self
 
-    # ---------------------------------------------------------------- Respuestas
-
+    # Genera la respuesta de varias frases a la vez.
     def responder_lote(self, frases, devolver_atencion=False):
-        # Genera la respuesta de una lista de frases a la vez.
         ids = self._codificar_preguntas(frases).astype("int32")
         generados, pesos = generar(
             self.modelo_encoder, self.modelo_paso, ids,
@@ -111,14 +105,17 @@ class Chatbot:
             self.max_decoder, self.atencion,
         )
 
-        # Pasamos los índices generados a palabras, parando en <end>.
+        # Convertimos los índices generados en palabras.
         respuestas = []
         for fila in generados:
             palabras = []
             for indice in fila:
                 token = self.vocab_dec.itos[indice]
+
+                # Al llegar a <end> (o al relleno) la respuesta ha terminado.
                 if token in (END, PAD):
                     break
+
                 palabras.append(token)
             respuestas.append(" ".join(palabras))
 
@@ -126,9 +123,10 @@ class Chatbot:
             return respuestas, pesos
         return respuestas
 
+    # Genera la respuesta de una sola frase.
     def responder(self, frase):
         return self.responder_lote([frase])[0]
 
+    # Número de parámetros que se entrenan (los embeddings congelados no cuentan).
     def n_parametros(self):
-        # Solo cuenta los pesos que se entrenan (los embeddings congelados no cuentan).
         return sum(int(np.prod(peso.shape)) for peso in self.modelo.trainable_weights)

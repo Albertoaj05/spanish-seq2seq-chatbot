@@ -1,13 +1,10 @@
-# Comparación de las cuatro versiones del chatbot, cada una con varias semillas.
+# Comparación de las cuatro versiones del chatbot, entrenando cada una con 5 semillas.
 #
-# Uso (desde la carpeta src/):
-#     python -m chatbot.experiments            # 5 semillas por versión (~20 min en CPU)
+#     python -m chatbot.experiments            # 5 semillas por versión (unos 20 min en CPU)
 #     python -m chatbot.experiments --seeds 2  # prueba rápida
 #
-# Guarda en results/:
-#     metrics.csv      una fila por versión y semilla: aciertos, épocas, tiempo...
-#     predictions.csv  la respuesta generada para cada frase de val, test y hard
-#     histories.json   las curvas de pérdida de cada entrenamiento
+# Los resultados se guardan en results/: metrics.csv (aciertos de cada entrenamiento),
+# predictions.csv (cada respuesta generada) e histories.json (curvas de entrenamiento).
 
 import argparse
 import json
@@ -22,7 +19,7 @@ from .retrieval import Recuperacion
 
 RESULTADOS = Path(__file__).resolve().parents[2] / "results"
 
-# Las cuatro versiones que comparo.
+# Versiones que comparamos.
 VERSIONES = {
     "seq2seq": {"atencion": False, "preentrenado": False},
     "seq2seq_attention": {"atencion": True, "preentrenado": False},
@@ -32,7 +29,6 @@ VERSIONES = {
 
 
 def evaluar(modelo, conjuntos, validas):
-    # Genera la respuesta de cada frase y comprueba si es correcta.
     # Una respuesta es correcta si coincide con alguna respuesta válida de su intención.
     filas = []
 
@@ -52,7 +48,7 @@ def evaluar(modelo, conjuntos, validas):
 
 
 def resumen_aciertos(filas, conjuntos):
-    # Porcentaje de aciertos en cada grupo (val, test, hard).
+    # Porcentaje de aciertos en cada grupo.
     df = pd.DataFrame(filas)
     return {f"acierto_{grupo}": df[df.split == grupo].correcta.mean() for grupo in conjuntos}
 
@@ -62,7 +58,7 @@ def main():
     parser.add_argument("--seeds", type=int, default=5)
     args = parser.parse_args()
 
-    # Datos: entrenamiento con aumento, y los tres grupos de evaluación.
+    # Cargamos los datos: entrenamiento con aumento y los tres grupos de evaluación.
     intenciones = cargar_intenciones()
     validas = respuestas_validas(intenciones)
     train = aumentar(pares(intenciones, "train"), n_copias=3)
@@ -73,7 +69,7 @@ def main():
     historiales = {}
     RESULTADOS.mkdir(exist_ok=True)
 
-    # 1. Referencia de recuperación (no tiene semilla, así que basta con una ejecución).
+    # Referencia de recuperación. No depende de ninguna semilla, así que basta con una ejecución.
     inicio = time.time()
     recuperacion = Recuperacion().entrenar(pares(intenciones, "train"))
     filas = evaluar(recuperacion, conjuntos, validas)
@@ -83,7 +79,7 @@ def main():
     metricas.append({"version": "retrieval_baseline", "semilla": 0, "epocas": 0, "parametros": 0,
                      "segundos": round(time.time() - inicio, 1), **resumen_aciertos(filas, conjuntos)})
 
-    # 2. Las cuatro versiones del chatbot, cada una con varias semillas.
+    # Entrenamos y evaluamos cada versión con varias semillas.
     for nombre, configuracion in VERSIONES.items():
         for semilla in range(args.seeds):
             inicio = time.time()
