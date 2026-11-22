@@ -1,0 +1,170 @@
+{
+  "saludo": {
+    "responses": ["Hola, en que puedo ayudarte", "Hola, dime que necesitas"],
+    "train": ["Hola", "Hola amigo", "Buenas", "Hey hola", "Holaa", "Hola chatbot", "Hola de nuevo", "Hey", "Buenas buenas"],
+    "val": ["Hola que hay"],
+    "test": ["Saludos", "Hola hola", "Hey chatbot"],
+    "hard": ["Qué pasa colega", "Ey, ¿hay alguien?"]
+  },
+  "buenos_dias": {
+    "responses": ["Buenos dias, en que puedo servirte"],
+    "train": ["Buenos días", "Buen día", "Muy buenos días", "Hola buenos días", "Buenos días a todos", "Buenos días chatbot", "Feliz día"],
+    "val": ["Buenos días amigo"],
+    "test": ["Muy buenos días chatbot", "Buen día amigo", "Hola, buen día"],
+    "hard": ["¿Qué tal la mañana?", "Acabo de levantarme"]
+  },
+  "buenas_noches": {
+    "responses": ["Que descanses"],
+    "train": ["Buenas noches", "Me voy a dormir", "Buenas noches chatbot", "Me voy a la cama", "Que pases buena noche", "Ya me voy a dormir", "Hasta mañana, me acuesto"],
+    "val": ["Buenas noches a todos"],
+    "test": ["Me voy ya a dormir", "Buena noche", "Me acuesto ya"],
+    "hard": ["Tengo mucho sueño", "Es tarde, a descansar"]
+  },
+  "estado": {
+    "responses": ["Estoy funcionando correctamente", "Estoy listo para ayudarte"],
+    "train": ["¿Cómo estás?", "Qué tal", "Cómo vas", "Cómo te encuentras", "Qué tal estás", "Cómo te va", "Estás bien", "Todo bien", "Qué tal todo"],
+    "val": ["Cómo andas"],
+    "test": ["¿Cómo te va hoy?", "Qué tal te encuentras", "¿Estás bien hoy?"],
+    "hard": ["¿Funcionas correctamente?", "¿Cómo lo llevas?"]
+  },
+  "hora": {
+    "responses": ["No tengo reloj"],
+    "train": ["¿Qué hora es?", "Me dices la hora", "Sabes qué hora es", "Tienes hora", "Qué hora tienes", "Dime la hora", "Qué hora es ahora"],
+    "val": ["¿Me das la hora?"],
+    "test": ["¿Sabes la hora?", "Hora por favor", "Qué hora será"],
+    "hard": ["¿Es muy tarde ya?", "¿Cuántos minutos faltan para las cinco?"]
+  },
+  "despedida": {
+    "responses": ["Hasta la vista", "Hasta pronto"],
+    "train": ["Adiós", "Hasta luego", "Nos vemos", "Chao", "Me voy", "Hasta otra", "Adiós chatbot", "Nos vemos luego", "Hasta pronto"],
+    "val": ["Chao chatbot"],
+    "test": ["Adiós amigo", "Nos vemos pronto", "Bueno, me voy"],
+    "hard": ["Me marcho ya", "Tengo que irme"]
+  },
+  "identidad": {
+    "responses": ["Soy un chatbot generativo"],
+    "train": ["¿Quién eres?", "Qué eres", "Eres un robot", "Quién eres tú", "Eres una persona", "Cómo te llamas", "Eres humano", "Qué tipo de programa eres"],
+    "val": ["Eres una máquina"],
+    "test": ["Tú quién eres", "¿Eres un humano?", "Dime quién eres"],
+    "hard": ["¿Hay alguien real al otro lado?", "¿Hablo con una inteligencia artificial?"]
+  },
+  "actividad": {
+    "responses": ["Aprendiendo a hablar"],
+    "train": ["¿Qué haces?", "Qué estás haciendo", "A qué te dedicas", "En qué andas", "Qué haces ahora", "Qué haces hoy"],
+    "val": ["Qué estás haciendo ahora"],
+    "test": ["Y tú qué haces", "¿A qué te dedicas tú?", "Qué haces por aquí"],
+    "hard": ["¿Ocupado?", "¿En qué trabajas?"]
+  },
+  "gracias": {
+    "responses": ["De nada", "No hay de que"],
+    "train": ["Gracias", "Muchas gracias", "Gracias por ayudarme", "Te lo agradezco", "Mil gracias", "Gracias amigo", "Muchísimas gracias"],
+    "val": ["Gracias chatbot"],
+    "test": ["Muchas gracias amigo", "Gracias por todo", "Te lo agradezco mucho"],
+    "hard": ["Eres un crack", "Me has salvado"]
+  },
+  "ayuda": {
+    "responses": ["Dime que necesitas", "Si, dime tu pregunta"],
+    "train": ["¿Me ayudas?", "Necesito ayuda", "Puedes ayudarme", "Tengo una pregunta", "Ayuda por favor", "Tengo una duda", "Me puedes ayudar"],
+    "val": ["Necesito que me ayudes"],
+    "test": ["¿Me puedes ayudar con algo?", "Tengo otra pregunta", "Ayúdame"],
+    "hard": ["Me echas una mano", "Quería consultarte algo"]
+  },
+  "no_entiendo": {
+    "responses": ["Puedo explicarlo paso a paso"],
+    "train": ["No entiendo", "No lo entiendo", "Me lo explicas", "No me queda claro", "Explícamelo otra vez", "No lo pillo", "Repítemelo"],
+    "val": ["No entiendo nada"],
+    "test": ["Sigo sin entenderlo", "¿Me lo explicas otra vez?", "No me ha quedado claro"],
+    "hard": ["Estoy perdido", "Me he liado"]
+  },
+  "chiste": {
+    "responses": ["Los chistes no son lo mio"],
+    "train": ["Cuéntame un chiste", "Dime un chiste", "Sabes algún chiste", "Hazme reír", "Cuenta un chiste", "Tienes algún chiste"],
+    "val": ["Un chiste por favor"],
+    "test": ["¿Me cuentas un chiste?", "Dime algo gracioso", "Sabes chistes"],
+    "hard": ["Estoy aburrido, anímame", "Algo divertido"]
+  },
+  "edad": {
+    "responses": ["Me entrenaron hace muy poco"],
+    "train": ["¿Cuántos años tienes?", "Qué edad tienes", "Eres joven", "Cuándo naciste", "Cuántos años tienes tú", "Eres viejo"],
+    "val": ["Dime tu edad"],
+    "test": ["¿Qué edad tienes tú?", "Cuántos años cumples", "¿Eres muy joven?"],
+    "hard": ["¿Desde cuándo existes?", "¿Cuándo te crearon?"]
+  },
+  "tiempo": {
+    "responses": ["No puedo ver el tiempo"],
+    "train": ["¿Qué tiempo hace?", "Va a llover", "Hace calor", "Qué tiempo hará mañana", "Hace frío fuera", "Hace sol"],
+    "val": ["Qué tiempo hace hoy"],
+    "test": ["¿Va a llover hoy?", "¿Hace frío?", "Qué tiempo hace ahí"],
+    "hard": ["¿Cojo el paraguas?", "¿Hay tormenta?"]
+  },
+  "funcionamiento": {
+    "responses": ["Uso un modelo encoder decoder", "Uso una red Seq2Seq con LSTM"],
+    "train": ["¿Cómo funcionas?", "Qué modelo usas", "Qué red usas", "Cómo estás hecho", "Qué arquitectura tienes", "Qué hay detrás de ti", "Cómo generas las respuestas"],
+    "val": ["Qué modelo tienes"],
+    "test": ["¿Qué red neuronal usas?", "Cómo funcionas por dentro", "¿Qué arquitectura usas?"],
+    "hard": ["¿De qué estás construido?", "¿Cómo piensas?"]
+  },
+  "entrenamiento": {
+    "responses": ["Aprendi con ejemplos de preguntas y respuestas"],
+    "train": ["¿Cómo aprendiste?", "Cómo te entrenaron", "Con qué datos aprendiste", "Quién te entrenó", "Cómo has aprendido a hablar", "Qué datos usaste para aprender"],
+    "val": ["Cómo te han entrenado"],
+    "test": ["¿Con qué te entrenaron?", "¿Cómo aprendes?", "Qué datos te dieron para aprender"],
+    "hard": ["¿De dónde sacas lo que sabes?", "¿Quién te enseñó?"]
+  },
+  "limitaciones": {
+    "responses": ["Solo conozco las frases de mi entrenamiento"],
+    "train": ["¿Qué no sabes hacer?", "Cuáles son tus limitaciones", "Lo sabes todo", "Qué limitaciones tienes", "Puedes responder a cualquier cosa", "Hay cosas que no sepas"],
+    "val": ["Tienes limitaciones"],
+    "test": ["¿Qué limitaciones tienes tú?", "¿Lo sabes todo de verdad?", "Qué cosas no sabes hacer"],
+    "hard": ["¿Te equivocas a veces?", "¿Eres perfecto?"]
+  },
+  "seq2seq": {
+    "responses": ["Es una arquitectura encoder decoder"],
+    "train": ["¿Qué es Seq2Seq?", "Qué significa Seq2Seq", "Explícame Seq2Seq", "Qué es un modelo Seq2Seq", "Para qué sirve Seq2Seq", "Seq2Seq qué es"],
+    "val": ["Háblame de Seq2Seq"],
+    "test": ["¿Qué es eso de Seq2Seq?", "Me explicas Seq2Seq", "Define Seq2Seq"],
+    "hard": ["¿Qué red convierte una secuencia en otra?", "¿Cómo se traduce una frase en otra con redes?"]
+  },
+  "encoder": {
+    "responses": ["El encoder resume la frase de entrada"],
+    "train": ["¿Qué es el encoder?", "Qué hace el encoder", "Para qué sirve el encoder", "Explícame el encoder", "Cómo funciona el encoder", "El encoder qué es"],
+    "val": ["Háblame del encoder"],
+    "test": ["¿Qué hace exactamente el encoder?", "Me explicas el encoder", "Define el encoder"],
+    "hard": ["¿Qué parte de la red lee mi pregunta?", "¿Qué parte del modelo procesa la entrada?"]
+  },
+  "decoder": {
+    "responses": ["El decoder genera la respuesta"],
+    "train": ["¿Qué es el decoder?", "Qué hace el decoder", "Para qué sirve el decoder", "Explícame el decoder", "Cómo funciona el decoder", "El decoder qué es"],
+    "val": ["Háblame del decoder"],
+    "test": ["¿Qué hace exactamente el decoder?", "Me explicas el decoder", "Define el decoder"],
+    "hard": ["¿Qué parte de la red escribe la respuesta?", "¿Qué parte del modelo produce la salida?"]
+  },
+  "lstm": {
+    "responses": ["Es una red recurrente con memoria"],
+    "train": ["¿Qué es LSTM?", "Qué es una LSTM", "Qué significa LSTM", "Explícame LSTM", "Para qué sirve una LSTM", "Qué hace una LSTM"],
+    "val": ["Háblame de las LSTM"],
+    "test": ["¿Qué es exactamente una LSTM?", "Me explicas qué es LSTM", "Define LSTM"],
+    "hard": ["¿Qué red recuerda lo que leyó antes?", "¿Qué tipo de neurona tiene memoria?"]
+  },
+  "atencion": {
+    "responses": ["Mira las palabras importantes de la entrada"],
+    "train": ["¿Qué es la atención?", "Qué hace la atención", "Para qué sirve la atención", "Explícame la atención", "Cómo funciona la atención", "Qué es el mecanismo de atención"],
+    "val": ["Háblame de la atención"],
+    "test": ["¿Qué hace el mecanismo de atención?", "Me explicas la atención", "Define atención"],
+    "hard": ["¿Cómo sabes en qué palabras fijarte?", "¿En qué te concentras al contestar?"]
+  },
+  "embedding": {
+    "responses": ["Convierte cada palabra en un vector"],
+    "train": ["¿Qué es un embedding?", "Qué hace un embedding", "Para qué sirven los embeddings", "Explícame los embeddings", "Cómo funciona un embedding", "Qué son los embeddings"],
+    "val": ["Háblame de los embeddings"],
+    "test": ["¿Qué es exactamente un embedding?", "Me explicas qué es un embedding", "Define embedding"],
+    "hard": ["¿Cómo representas cada palabra con números?", "¿Cómo pasas el texto a números?"]
+  },
+  "sobreajuste": {
+    "responses": ["Es memorizar en vez de generalizar"],
+    "train": ["¿Qué es el sobreajuste?", "Qué es overfitting", "Qué significa sobreajuste", "Explícame el sobreajuste", "Cómo se evita el sobreajuste", "Qué es el overfitting"],
+    "val": ["Háblame del sobreajuste"],
+    "test": ["¿Qué es exactamente el overfitting?", "Me explicas el sobreajuste", "Define sobreajuste"],
+    "hard": ["¿Por qué un modelo falla con datos nuevos?", "¿Por qué aprender de memoria es malo?"]
+  }
+}
